@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'Services/auth.dart';
+import 'homepage.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -6,6 +9,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  UserCredential _userData;
+  final _authServices = FirebaseMethods();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -75,7 +80,22 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 20,
                   ),
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        _authServices
+                            .registerNewUser(
+                                _emailController.text, _passwordController.text)
+                            .then((userData) {
+                          _userData = userData;
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      HomePage(userData.user.email)),
+                              (route) => false);
+                        });
+                      }
+                    },
                     child: Text("Register"),
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 50),
                     color: Colors.green,

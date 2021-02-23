@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'Services/auth.dart';
+import 'homepage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -6,6 +9,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  UserCredential _userData;
+  final _authServices = FirebaseMethods();
   final _formKey = new GlobalKey<FormState>();
   final _emailController = new TextEditingController();
   final _passwordController = new TextEditingController();
@@ -67,7 +72,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   FlatButton(
                     onPressed: () {
-                      _formKey.currentState.validate();
+                      if (_formKey.currentState.validate()) {
+                        _authServices
+                            .signInExistingUser(
+                                _emailController.text, _passwordController.text)
+                            .then((userData) {
+                          _userData = userData;
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      HomePage(userData.user.email)),
+                              (route) => false);
+                        });
+                      }
                     },
                     child: Text("Login"),
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 50),
