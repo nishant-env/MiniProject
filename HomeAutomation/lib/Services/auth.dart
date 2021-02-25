@@ -1,18 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class FirebaseMethods {
   FirebaseAuth _auth = FirebaseAuth.instance;
   Future<UserCredential> _userCredential;
 
-  Future<UserCredential> registerNewUser(String _email, String _password) {
+  Future<UserCredential> registerNewUser(
+      String _email, String _password, BuildContext context) {
     try {
       _userCredential = _auth.createUserWithEmailAndPassword(
           email: _email, password: _password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        showSnackBar(context, "Weak Password");
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        showSnackBar(context, "Email already registered");
       }
     } catch (e) {
       print(e);
@@ -20,17 +23,30 @@ class FirebaseMethods {
     return _userCredential;
   }
 
-  Future<UserCredential> signInExistingUser(String _email, String _password) {
+  Future<UserCredential> signInExistingUser(
+      String _email, String _password, BuildContext context) {
     try {
       _userCredential =
           _auth.signInWithEmailAndPassword(email: _email, password: _password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        showSnackBar(context, "User Not Registered");
+        ;
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        showSnackBar(context, "Wrong Password");
+        print('Wrong pwd');
       }
     }
     return _userCredential;
   }
+
+  signOut() async {
+    await _auth.signOut();
+  }
+}
+
+showSnackBar(BuildContext context, String text) {
+  Scaffold.of(context).showSnackBar(SnackBar(
+    content: Text(text),
+  ));
 }

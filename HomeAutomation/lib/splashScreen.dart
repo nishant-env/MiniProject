@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           return LoginPage();
         }
-        return SplashPage();
+        return null;
       },
     );
   }
