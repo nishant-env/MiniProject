@@ -3,9 +3,9 @@ import 'Services/auth.dart';
 
 class HomePage extends StatelessWidget {
   final _authServices = FirebaseMethods();
-  final String _userEmail;
+  // final String _userEmail;
   @override
-  HomePage(this._userEmail);
+  // HomePage(this._userEmail);
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Text(_userEmail),
+      body: Text('Logged IN'),
     );
   }
 }

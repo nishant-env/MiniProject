@@ -1,29 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loading/loading.dart';
 import 'package:loading/indicator/ball_pulse_indicator.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'loginScreen.dart';
-
-class MainApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initialization,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          print(snapshot.error);
-          return Text('error');
-        }
-        if (snapshot.connectionState == ConnectionState.done) {
-          return LoginPage();
-        }
-        return null;
-      },
-    );
-  }
-}
 
 class SplashPage extends StatefulWidget {
   @override
@@ -37,7 +16,7 @@ class _SplashPageState extends State<SplashPage> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MainApp(),
+            builder: (context) => LoginPage(),
           ));
     });
   }

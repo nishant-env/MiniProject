@@ -86,6 +86,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     FlatButton(
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
+                          FocusScope.of(context)
+                              .requestFocus(FocusNode()); // Dismissing Keyboard
                           setState(() {
                             _isSpinning = true;
                           });
@@ -93,18 +95,19 @@ class _RegisterPageState extends State<RegisterPage> {
                               .registerNewUser(_emailController.text,
                                   _passwordController.text, context)
                               .then((userData) {
-                            _userData = userData;
                             setState(() {
                               _isSpinning = false;
+                            });
+                            if (userData != null) {
+                              _userData = userData;
                               _emailController.clear();
                               _passwordController.clear();
-                            });
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        HomePage(userData.user.email)),
-                                (route) => false);
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage()),
+                                  (route) => false);
+                            }
                           });
                         }
                       },

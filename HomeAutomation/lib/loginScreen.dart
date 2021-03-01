@@ -20,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text("Login"),
         centerTitle: true,
@@ -77,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                     FlatButton(
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           setState(() {
                             _isSpinning = true;
                           });
@@ -87,15 +89,18 @@ class _LoginPageState extends State<LoginPage> {
                             _userData = userData;
                             setState(() {
                               _isSpinning = false;
-                              _emailController.clear();
-                              _passwordController.clear();
                             });
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        HomePage(userData.user.email)),
-                                (route) => false);
+                            if (userData != null) {
+                              setState(() {
+                                _emailController.clear();
+                                _passwordController.clear();
+                              });
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage()),
+                                  (route) => false);
+                            }
                           });
                         }
                       },

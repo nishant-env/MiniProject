@@ -1,21 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class FirebaseMethods {
   FirebaseAuth _auth = FirebaseAuth.instance;
-  Future<UserCredential> _userCredential;
+  UserCredential _userCredential;
 
   Future<UserCredential> registerNewUser(
-      String _email, String _password, BuildContext context) {
+      String _email, String _password, BuildContext context) async {
     try {
-      _userCredential = _auth.createUserWithEmailAndPassword(
+      _userCredential = await _auth.createUserWithEmailAndPassword(
           email: _email, password: _password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        showSnackBar(context, "Weak Password");
+        showSnackBar("Weak Password");
       } else if (e.code == 'email-already-in-use') {
-        showSnackBar(context, "Email already registered");
+        showSnackBar("Email already registered");
       }
     } catch (e) {
       print(e);
@@ -24,18 +25,14 @@ class FirebaseMethods {
   }
 
   Future<UserCredential> signInExistingUser(
-      String _email, String _password, BuildContext context) {
+      String _email, String _password, BuildContext context) async {
     try {
-      _userCredential =
-          _auth.signInWithEmailAndPassword(email: _email, password: _password);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        showSnackBar(context, "User Not Registered");
-        ;
-      } else if (e.code == 'wrong-password') {
-        showSnackBar(context, "Wrong Password");
-        print('Wrong pwd');
-      }
+      _userCredential = await _auth.signInWithEmailAndPassword(
+          email: _email, password: _password);
+    } on PlatformException catch (e) {
+      showSnackBar(e.message);
+    } catch (e) {
+      showSnackBar(e.message);
     }
     return _userCredential;
   }
@@ -45,8 +42,10 @@ class FirebaseMethods {
   }
 }
 
-showSnackBar(BuildContext context, String text) {
-  Scaffold.of(context).showSnackBar(SnackBar(
+GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+showSnackBar(String text) {
+  scaffoldKey.currentState.showSnackBar(SnackBar(
     content: Text(text),
+    duration: Duration(seconds: 1),
   ));
 }
