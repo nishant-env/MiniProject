@@ -7,6 +7,11 @@ class FirebaseMethods {
   FirebaseAuth _auth = FirebaseAuth.instance;
   UserCredential _userCredential;
 
+  bool checkingIfLogged() {
+    User user = _auth.currentUser;
+    return user != null ? true : false;
+  }
+
   Future<UserCredential> registerNewUser(
       String _email, String _password, BuildContext context) async {
     try {
