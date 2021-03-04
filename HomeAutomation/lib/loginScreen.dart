@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'Services/auth.dart';
 import 'homepage.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'Services/dataExtractor.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -87,13 +88,14 @@ class _LoginPageState extends State<LoginPage> {
                                   _passwordController.text, context)
                               .then((userData) {
                             _userData = userData;
-                            setState(() {
-                              _isSpinning = false;
-                            });
+
                             if (userData != null) {
                               setState(() {
                                 _emailController.clear();
                                 _passwordController.clear();
+                              });
+                              setState(() {
+                                _isSpinning = false;
                               });
                               Navigator.pushAndRemoveUntil(
                                   context,

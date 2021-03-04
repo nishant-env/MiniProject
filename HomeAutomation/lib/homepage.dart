@@ -2,6 +2,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'Services/auth.dart';
 import 'Services/database.dart';
+import 'package:loading/loading.dart';
+import 'package:loading/indicator/ball_pulse_indicator.dart';
 
 Map<String, dynamic> dataFromDataBase = {
   'room': '',
@@ -23,26 +25,30 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _databaseServices.getData().then((value1) {
-      if (value1 != null) {
-        setState(() {
-          returnData = value1;
-        });
-        value1.value.forEach((key, value2) {
-          id = FirebaseDatabase.instance.reference().child('rooms').child(key);
-          value2.forEach((key, value) {
-            setState(() {
-              dataFromDataBase[key] = value;
-            });
-          });
-        });
-        _databaseServices.getSwitchStatus(() {
+    fetchData();
+  }
+
+  DataSnapshot value1;
+  fetchData() async {
+    value1 = await _databaseServices.getData();
+    if (value1 != null) {
+      setState(() {
+        returnData = value1;
+      });
+      value1.value.forEach((key, value2) {
+        id = FirebaseDatabase.instance.reference().child('rooms').child(key);
+        value2.forEach((key, value) {
           setState(() {
-            _databaseServices.switchStatus = dataFromDataBase['switch_status'];
+            dataFromDataBase[key] = value;
           });
         });
-      }
-    });
+      });
+      _databaseServices.getSwitchStatus(() {
+        setState(() {
+          _databaseServices.switchStatus = dataFromDataBase['switch_status'];
+        });
+      });
+    }
   }
 
   @override
@@ -52,6 +58,7 @@ class _HomePageState extends State<HomePage> {
       key: scaffoldKey,
       appBar: AppBar(
         title: Text('HomeAutomation'),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -63,32 +70,40 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Container(
-          child: returnData.value != null
-              ? Center(
-                  child: RaisedButton(
-                    elevation: 20.0,
-                    onPressed: () {
-                      setState(() {
-                        _databaseServices.switchStatus =
-                            !_databaseServices.switchStatus;
-                        _databaseServices.updateStatus();
-                        _databaseServices.switchStatus
-                            ? showSnackBar('Turning ON')
-                            : showSnackBar('Turning OFF');
-                      });
-                    },
-                    child: _databaseServices.switchStatus
-                        ? Text('Turn OFF')
-                        : Text('Turn ON'),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 20, horizontal: 100),
-                    color: _databaseServices.switchStatus
-                        ? Colors.green
-                        : Colors.red,
-                  ),
-                )
-              : Container()),
+      body: value1 == null
+          ? Center(
+              child: Loading(
+                indicator: BallPulseIndicator(),
+                size: 100.0,
+                color: Colors.black,
+              ),
+            )
+          : Container(
+              child: returnData.value != null
+                  ? Center(
+                      child: RaisedButton(
+                        elevation: 20.0,
+                        onPressed: () {
+                          setState(() {
+                            _databaseServices.switchStatus =
+                                !_databaseServices.switchStatus;
+                            _databaseServices.updateStatus();
+                            _databaseServices.switchStatus
+                                ? showSnackBar('Turning ON')
+                                : showSnackBar('Turning OFF');
+                          });
+                        },
+                        child: _databaseServices.switchStatus
+                            ? Text('Turn OFF')
+                            : Text('Turn ON'),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+                        color: _databaseServices.switchStatus
+                            ? Colors.green
+                            : Colors.red,
+                      ),
+                    )
+                  : Container()),
     );
   }
 }
