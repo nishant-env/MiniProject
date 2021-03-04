@@ -24,7 +24,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _databaseServices.getData().then((value1) {
-      print(value1.value);
       if (value1 != null) {
         setState(() {
           returnData = value1;
@@ -34,7 +33,6 @@ class _HomePageState extends State<HomePage> {
           value2.forEach((key, value) {
             setState(() {
               dataFromDataBase[key] = value;
-              print(dataFromDataBase);
             });
           });
         });
@@ -51,6 +49,7 @@ class _HomePageState extends State<HomePage> {
   // HomePage(this._userEmail);
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text('HomeAutomation'),
         actions: <Widget>[
@@ -74,6 +73,9 @@ class _HomePageState extends State<HomePage> {
                         _databaseServices.switchStatus =
                             !_databaseServices.switchStatus;
                         _databaseServices.updateStatus();
+                        _databaseServices.switchStatus
+                            ? showSnackBar('Turning ON')
+                            : showSnackBar('Turning OFF');
                       });
                     },
                     child: _databaseServices.switchStatus
