@@ -88,7 +88,9 @@ class _LoginPageState extends State<LoginPage> {
                                   _passwordController.text, context)
                               .then((userData) {
                             _userData = userData;
-
+                            setState(() {
+                              _isSpinning = false;
+                            });
                             if (userData != null) {
                               setState(() {
                                 _emailController.clear();
