@@ -67,7 +67,8 @@ class _HomePageState extends State<HomePage> {
       body: Container(
           child: returnData.value != null
               ? Center(
-                  child: FlatButton(
+                  child: RaisedButton(
+                    elevation: 20.0,
                     onPressed: () {
                       setState(() {
                         _databaseServices.switchStatus =
@@ -78,8 +79,11 @@ class _HomePageState extends State<HomePage> {
                     child: _databaseServices.switchStatus
                         ? Text('Turn OFF')
                         : Text('Turn ON'),
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 50),
-                    color: Colors.green,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+                    color: _databaseServices.switchStatus
+                        ? Colors.green
+                        : Colors.red,
                   ),
                 )
               : Container()),
